@@ -1,18 +1,53 @@
 use strict;
 use warnings;
 package Version::Next;
-# ABSTRACT: a module for CPAN
+# ABSTRACT: increment module version numbers simply and correctly
 
 # Dependencies
-use autodie 2.00;
-use Moose 0.99;
-use namespace::autoclean 0.09;
+use version 0.80 ();
 
-# extends, roles, attributes, etc.
+# Exporting
+use Sub::Exporter 0 ( -setup => { exports => [ 'next_version' ] } );
 
-# methods
+=method next_version
 
-__PACKAGE__->meta->make_immutable;
+=cut
+
+sub next_version {
+  my $version = shift;
+  return 0 unless defined $version;
+
+  my $new_ver;
+
+  my $num_dots =()= $version =~ /(\.)/g;
+  my $has_v = $version =~ /^v/;
+
+
+  if ( $has_v || $num_dots > 1 ) { # vstring
+    $version =~ s{^v}{} if $has_v;
+    my @parts = split /\./, $version;
+    my @new_ver;
+    while ( @parts ) {
+      my $p = pop @parts;
+      if ( $p < 999 || ! @parts ) {
+        unshift @new_ver, $p+1;
+        last;
+      }
+      else {
+        unshift @new_ver, 0;
+      }
+    }
+    $new_ver = $has_v ? 'v' : '';
+    $new_ver .= join( ".", map { 0+$_ } @parts, @new_ver );
+  }
+  else { # decimal fraction
+    my ($fraction) = $version =~ m{\.(\d+)$};
+    my $n = defined $fraction ? length($fraction) : 0;
+    $new_ver = sprintf("%.${n}f",$version + (10**-$n));
+  }
+  return $new_ver;
+
+}
 
 1;
 
@@ -23,6 +58,8 @@ __END__
 = SYNOPSIS
 
     use Version::Next;
+
+    my $new_version = next_version( $old_version )
 
 = DESCRIPTION
 
@@ -35,7 +72,7 @@ Good luck!
 
 = SEE ALSO
 
-Maybe other modules do related things.
+* [Perl::Version]
 
 =cut
 
