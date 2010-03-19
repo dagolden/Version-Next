@@ -18,14 +18,16 @@ sub next_version {
   return 0 unless defined $version;
 
   my $new_ver;
-
   my $num_dots =()= $version =~ /(\.)/g;
   my $has_v = $version =~ /^v/;
-
+  my $is_alpha = $version =~ /\A[^_]+_\d+\z/;
 
   if ( $has_v || $num_dots > 1 ) { # vstring
     $version =~ s{^v}{} if $has_v;
     my @parts = split /\./, $version;
+    if ( $is_alpha ) { # vstring with alpha
+      push @parts, split /_/, pop @parts;
+    }
     my @new_ver;
     while ( @parts ) {
       my $p = pop @parts;
@@ -39,11 +41,22 @@ sub next_version {
     }
     $new_ver = $has_v ? 'v' : '';
     $new_ver .= join( ".", map { 0+$_ } @parts, @new_ver );
+    if ( $is_alpha ) {
+      $new_ver =~ s{\A(.*)\.(\d+)}{$1_$2};
+    }
   }
   else { # decimal fraction
+    my $alpha_neg_offset;
+    if ( $is_alpha ) {
+      $alpha_neg_offset = index( $version, "_" ) +1 - length( $version );
+      $version =~ s{_}{};
+    }
     my ($fraction) = $version =~ m{\.(\d+)$};
     my $n = defined $fraction ? length($fraction) : 0;
     $new_ver = sprintf("%.${n}f",$version + (10**-$n));
+    if ( $is_alpha ) {
+      substr($new_ver, $alpha_neg_offset, 0, "_");
+    }
   }
   return $new_ver;
 
