@@ -4,18 +4,27 @@ package Version::Next;
 # ABSTRACT: increment module version numbers simply and correctly
 
 # Dependencies
-use version 0.80 ();
+# use version 0.81 (); # XXX not out yet
+use Carp 0 ();
 
 # Exporting
 use Sub::Exporter 0 ( -setup => { exports => [ 'next_version' ] } );
 
 =method next_version
 
+  next_version( $old_version );
+
+Returns the version number
+
 =cut
 
 sub next_version {
   my $version = shift;
   return 0 unless defined $version;
+
+  # XXX when next version.pm comes out, use version::is_lax
+  Carp::croak( "Doesn't look like a version number: '$version'" )
+    unless $version =~ m{\Av?[0-9._]+\z};
 
   my $new_ver;
   my $num_dots =()= $version =~ /(\.)/g;

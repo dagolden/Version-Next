@@ -12,7 +12,8 @@ require_ok( 'Version::Next' );
 can_ok( 'Version::Next', 'next_version' );
 eval "use Version::Next 'next_version'";
 can_ok( 'main', 'next_version' );
-is( next_version(1), 2, "simple test");
+is( next_version(1), 2, "1 + 1 == 2");
+throws_ok { next_version('abc') } qr/Doesn't look like a version number: 'abc' at/, "throws error on bad input";
 
 for my $case ( <DATA> ) {
   chomp $case;
