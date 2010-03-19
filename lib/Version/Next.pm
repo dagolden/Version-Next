@@ -10,14 +10,6 @@ use Carp 0 ();
 # Exporting
 use Sub::Exporter 0 ( -setup => { exports => [ 'next_version' ] } );
 
-=method next_version
-
-  next_version( $old_version );
-
-Returns the version number
-
-=cut
-
 sub next_version {
   my $version = shift;
   return 0 unless defined $version;
@@ -79,22 +71,56 @@ __END__
 
 = SYNOPSIS
 
-    use Version::Next;
+  use Version::Next;
 
-    my $new_version = next_version( $old_version )
+  my $new_version = next_version( $old_version );
 
 = DESCRIPTION
 
-This module might be cool, but you'd never know it from the lack
-of documentation.
+This module provides a simple, correct way to increment a Perl module version
+number.  It does not attempt to guess what the original version number author
+intended, it simply increments in the smallest possible fashion.  Decimals are
+incremented like an odometer.  Dotted decimals are incremented piecewise and
+presented in a standardized way.
+
+If more complex version manipulation is necessary, you may wish to consider
+[Perl::Version].
 
 = USAGE
 
-Good luck!
+== {next_version}
+
+  my $new_version = next_version( $old_version );
+
+Given a string, this function make the smallest logical increment and return it.
+The input string is very minimally checked that it resembles a version
+number.  Given {undef}, it returns {0}.
+
+Decimal versions are incremented like an odometer, preserving the original
+number of decimal places.  If an underscore is present (indicating an "alpha"
+version), its relative position is preserved.  Examples:
+
+  0.001    ->   0.002
+  0.999    ->   1.000
+  0.1229   ->   0.1230
+  0.12_34  ->   0.12_35
+  0.12_99  ->   0.13_00
+
+Dotted-decimal versions have the least significant element incremented by one.
+If the result exceeds {999}, the element resets to {0} and the next
+most significant element is incremented, and so on.  Any leading zero padding
+is removed.  Examples:
+
+ v1.2.3     ->  v1.2.4
+ v1.2.999   ->  v1.3.0
+ v1.999.999 ->  v2.0.0
+ v1.2.3_4   ->  v1.2.3_5
+ v1.2.3_999 ->  v1.2.4_0
 
 = SEE ALSO
 
 * [Perl::Version]
 
-=cut
+=end wikidoc
 
+=cut
