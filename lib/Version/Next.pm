@@ -88,13 +88,16 @@ If more complex version manipulation is necessary, you may wish to consider
 
 = USAGE
 
+This module uses [Sub::Exporter] for optional exporting.  Nothing is exported
+by default.
+
 == {next_version}
 
   my $new_version = next_version( $old_version );
 
-Given a string, this function make the smallest logical increment and return it.
-The input string is very minimally checked that it resembles a version
-number.  Given {undef}, it returns {0}.
+Given a string, this function make the smallest logical increment and returns
+it.  The input string is very minimally checked that it resembles a version
+number.  Given {undef}, the function returns {0}.
 
 Decimal versions are incremented like an odometer, preserving the original
 number of decimal places.  If an underscore is present (indicating an "alpha"
