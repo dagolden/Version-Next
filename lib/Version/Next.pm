@@ -5,7 +5,7 @@ package Version::Next;
 
 # Dependencies
 # use version 0.81 (); # XXX not out yet
-use Carp 0 ();
+use Carp ();
 
 # Exporting
 use Sub::Exporter 0 ( -setup => { exports => [ 'next_version' ] } );
