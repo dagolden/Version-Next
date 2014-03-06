@@ -71,7 +71,7 @@ __END__
 
 = SYNOPSIS
 
-  use Version::Next;
+  use Version::Next qw/next_version/;
 
   my $new_version = next_version( $old_version );
 
