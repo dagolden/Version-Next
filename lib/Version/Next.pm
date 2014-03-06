@@ -6,7 +6,7 @@ package Version::Next;
 # VERSION
 
 # Dependencies
-# use version 0.81 (); # XXX not out yet
+use version 0.81 ();
 use Carp ();
 
 # Exporting
@@ -16,9 +16,8 @@ sub next_version {
     my $version = shift;
     return 0 unless defined $version;
 
-    # XXX when next version.pm comes out, use version::is_lax
     Carp::croak("Doesn't look like a version number: '$version'")
-      unless $version =~ m{\Av?[0-9._]+\z};
+      unless version::is_lax($version);
 
     my $new_ver;
     my $num_dots =()= $version =~ /(\.)/g;
