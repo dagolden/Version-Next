@@ -2,6 +2,7 @@ requires "Carp" => "0";
 requires "Sub::Exporter" => "0";
 requires "perl" => "5.006";
 requires "strict" => "0";
+requires "version" => "0.81";
 requires "warnings" => "0";
 
 on 'test' => sub {
@@ -10,7 +11,6 @@ on 'test' => sub {
   requires "List::Util" => "0";
   requires "Test::Exception" => "0.29";
   requires "Test::More" => "0.88";
-  requires "version" => "0";
 };
 
 on 'test' => sub {
