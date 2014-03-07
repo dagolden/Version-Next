@@ -95,15 +95,13 @@ sub next_version {
 
 __END__
 
-=begin wikidoc
-
-= SYNOPSIS
+=head1 SYNOPSIS
 
   use Version::Next qw/next_version/;
 
   my $new_version = next_version( $old_version );
 
-= DESCRIPTION
+=head1 DESCRIPTION
 
 This module provides a simple, correct way to increment a Perl module version
 number.  It does not attempt to guess what the original version number author
@@ -112,23 +110,25 @@ incremented like an odometer.  Dotted decimals are incremented piecewise and
 presented in a standardized way.
 
 If more complex version manipulation is necessary, you may wish to consider
-[Perl::Version].
+L<Perl::Version>.
 
-= USAGE
+=head1 USAGE
 
-This module uses [Sub::Exporter] for optional exporting.  Nothing is exported
+This module uses L<Sub::Exporter> for optional exporting.  Nothing is exported
 by default.
 
-== {next_version}
+=head2 C<next_version>
 
   my $new_version = next_version( $old_version );
 
 Given a string, this function make the smallest logical increment and returns
 it.  The input string must be a "lax" version numbers as defined by the
-[version] module.  The literal string "undef" is treated as "0" and incremented
-to "1".  Leading or trailing periods have a "0" prepended or appended as
-appropriate before the version is incremented.  For legacy reasons, given no
-argument, the function returns "0".
+L<version> module.  The string "undef" is treated as C<0> and
+incremented to C<1>.  Leading or trailing periods have a C<0> prepended or
+appended as appropriate before the version is incremented, except for crazy
+dotted-decimals like C<.1.2> which are fully normalized instead.  For legacy
+reasons, given no argument or a literal C<undef> (not the string "undef"), the
+function returns C<0>.
 
 Decimal versions are incremented like an odometer, preserving the original
 number of decimal places.  If an underscore is present (indicating an "alpha"
@@ -141,7 +141,7 @@ version), its relative position is preserved.  Examples:
   0.12_99  ->   0.13_00
 
 Dotted-decimal versions have the least significant element incremented by one.
-If the result exceeds {999}, the element resets to {0} and the next
+If the result exceeds C<999>, the element resets to C<0> and the next
 most significant element is incremented, and so on.  Any leading zero padding
 is removed.  Examples:
 
@@ -151,10 +151,10 @@ is removed.  Examples:
  v1.2.3_4   ->  v1.2.3_5
  v1.2.3_999 ->  v1.2.4_0
 
-= SEE ALSO
+=head1 SEE ALSO
 
-* [Perl::Version]
-
-=end wikidoc
+=for :list
+* L<version>
+* L<Perl::Version>
 
 =cut
