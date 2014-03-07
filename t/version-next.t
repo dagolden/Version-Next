@@ -14,8 +14,22 @@ can_ok( 'Version::Next', 'next_version' );
 eval "use Version::Next 'next_version'";
 can_ok( 'main', 'next_version' );
 is( next_version(1), 2, "1 + 1 == 2" );
-for my $error_case (qw( abc 1_00_01 1.00_ 1..0 v1_ )) {
-    throws_ok { next_version($error_case) } qr/Doesn't look like a version number: '$error_case' at/,
+
+my @errors = qw(
+  abc
+  1_00_01
+  1.00_
+  1..0
+  v1_
+  v.2
+  .1.
+  .1.2.
+  1_1.
+);
+
+for my $error_case (@errors) {
+    throws_ok { next_version($error_case) }
+    qr/Doesn't look like a version number: '$error_case' at/,
       "throws error on bad input ($error_case)";
 }
 
@@ -151,3 +165,12 @@ v0.0_010   v0.0_11
 v0.0_099   v0.0_100
 v0.0_0999  v0.1_0
 v0.0_01000 v0.1_0
+
+# weird lax stuff
+
+undef   1
+.1      0.2
+.1_1    0.1_2
+1.      1.1
+.1.2    v0.1.3
+.1.2_3  v0.1.2_4

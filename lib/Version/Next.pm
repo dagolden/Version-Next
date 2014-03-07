@@ -12,12 +12,39 @@ use Carp ();
 # Exporting
 use Sub::Exporter 0 ( -setup => { exports => ['next_version'] } );
 
+# lax versions are too lax
+sub _cleanup {
+    my $version = shift;
+
+    # treat 'undef' as 0
+    if ( $version eq 'undef' ) {
+        return "0";
+    }
+
+    # fix leading dots
+    if ( $version =~ /^\./ ) {
+        my $num_dots =()= $version =~ /(\.)/g;
+        return $num_dots > 1 ? version->parse($version)->normal : "0$version";
+    }
+
+    # fix trailing dots
+    if ( $version =~ /\.$/ ) {
+        # is_lax already prevents dotted-decimal with trailing dot
+        return "${version}0";
+    }
+
+    # otherwise, it should be fine
+    return $version;
+}
+
 sub next_version {
     my $version = shift;
-    return 0 unless defined $version;
+    return "0" unless defined $version;
 
     Carp::croak("Doesn't look like a version number: '$version'")
       unless version::is_lax($version);
+
+    $version = _cleanup($version);
 
     my $new_ver;
     my $num_dots =()= $version =~ /(\.)/g;
@@ -97,8 +124,11 @@ by default.
   my $new_version = next_version( $old_version );
 
 Given a string, this function make the smallest logical increment and returns
-it.  The input string is very minimally checked that it resembles a version
-number.  Given {undef}, the function returns {0}.
+it.  The input string must be a "lax" version numbers as defined by the
+[version] module.  The literal string "undef" is treated as "0" and incremented
+to "1".  Leading or trailing periods have a "0" prepended or appended as
+appropriate before the version is incremented.  For legacy reasons, given no
+argument, the function returns "0".
 
 Decimal versions are incremented like an odometer, preserving the original
 number of decimal places.  If an underscore is present (indicating an "alpha"

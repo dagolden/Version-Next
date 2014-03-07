@@ -2,6 +2,11 @@ Revision history for Version-Next
 
 {{$NEXT}}
 
+    [CHANGED]
+
+    - Now requires inputs to pass version::is_lax(), but does some
+      sanitization of excessivly lax inputs
+
 0.003     2014-03-06 10:11:34-05:00 America/New_York
 
     [DOCUMENTED]
