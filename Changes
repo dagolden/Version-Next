@@ -2,6 +2,8 @@ Revision history for Version-Next
 
 {{$NEXT}}
 
+1.000     2016-02-25 14:37:13-05:00 America/New_York
+
     [!!! INCOMPATIBLE CHANGES !!!]
 
     - Due to changes in the interpretation of dotted-decimal version
