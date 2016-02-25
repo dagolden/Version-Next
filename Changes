@@ -2,6 +2,14 @@ Revision history for Version-Next
 
 {{$NEXT}}
 
+    [!!! INCOMPATIBLE CHANGES !!!]
+
+    - Due to changes in the interpretation of dotted-decimal version
+      numbers with alpha elements in version.pm 0.9913 and later, the
+      notion of the 'next' dotted-decimal alpha is ill-defined.
+      Version::Next no longer supports dotted-decimals with alpha elements
+      and will throw an exception if one is passed to next_version.
+
 0.004     2014-03-07 06:24:03-05:00 America/New_York
 
     [CHANGED]
