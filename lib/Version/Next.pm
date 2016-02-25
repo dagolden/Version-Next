@@ -3,7 +3,8 @@ use warnings;
 
 package Version::Next;
 # ABSTRACT: increment module version numbers simply and correctly
-# VERSION
+
+our $VERSION = "0.005";
 
 # Dependencies
 use version 0.81 ();
