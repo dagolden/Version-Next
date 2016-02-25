@@ -25,7 +25,7 @@ sub _cleanup {
     # fix leading dots
     if ( $version =~ /^\./ ) {
         my $num_dots =()= $version =~ /(\.)/g;
-        return $num_dots > 1 ? version->parse($version)->normal : "0$version";
+        return $num_dots > 1 ? "v0$version" : "0$version";
     }
 
     # fix trailing dots
@@ -56,7 +56,7 @@ sub next_version {
         $version =~ s{^v}{} if $has_v;
         my @parts = split /\./, $version;
         if ($is_alpha) {             # vstring with alpha
-            push @parts, split /_/, pop @parts;
+            Carp::croak( _vstring_alpha_unsupported_msg($version) );
         }
         my @new_ver;
         while (@parts) {
@@ -71,9 +71,6 @@ sub next_version {
         }
         $new_ver = $has_v ? 'v' : '';
         $new_ver .= join( ".", map { 0+ $_ } @parts, @new_ver );
-        if ($is_alpha) {
-            $new_ver =~ s{\A(.*)\.(\d+)}{$1_$2};
-        }
     }
     else { # decimal fraction
         my $alpha_neg_offset;
@@ -90,6 +87,22 @@ sub next_version {
     }
     return $new_ver;
 
+}
+
+sub _vstring_alpha_unsupported_msg {
+    my $v   = shift;
+    my $msg = <<"HERE";
+Can't determine next version number for '$v'.
+
+Due to changes in the interpretation of dotted-decimal version numbers with
+alpha elements in version.pm 0.9913 and later, the notion of the 'next'
+dotted-decimal alpha is ill-defined.  Version::Next no longer supports
+dotted-decimals with alpha elements.
+
+Aborting
+HERE
+    chomp $msg;
+    return $msg;
 }
 
 1;
@@ -122,14 +135,13 @@ by default.
 
   my $new_version = next_version( $old_version );
 
-Given a string, this function make the smallest logical increment and returns
-it.  The input string must be a "lax" version numbers as defined by the
-L<version> module.  The string "undef" is treated as C<0> and
-incremented to C<1>.  Leading or trailing periods have a C<0> prepended or
-appended as appropriate before the version is incremented, except for crazy
-dotted-decimals like C<.1.2> which are fully normalized instead.  For legacy
-reasons, given no argument or a literal C<undef> (not the string "undef"), the
-function returns C<0>.
+Given a string, this function make the smallest logical increment and
+returns it.  The input string must be a "lax" version numbers as defined by
+the L<version> module.  The string "undef" is treated as C<0> and
+incremented to C<1>.  Leading or trailing periods have a C<0> (or C<v0>)
+prepended or appended as appropriate.  For legacy reasons, given no
+argument or a literal C<undef> (not the string "undef"), the function
+returns C<0>.
 
 Decimal versions are incremented like an odometer, preserving the original
 number of decimal places.  If an underscore is present (indicating an "alpha"
@@ -149,8 +161,12 @@ is removed.  Examples:
  v1.2.3     ->  v1.2.4
  v1.2.999   ->  v1.3.0
  v1.999.999 ->  v2.0.0
- v1.2.3_4   ->  v1.2.3_5
- v1.2.3_999 ->  v1.2.4_0
+
+B<NOTE>: Due to changes in the interpretation of dotted-decimal version
+numbers with alpha elements in L<version> 0.9913 and later, the notion of
+the 'next' dotted-decimal alpha is ill-defined.  Version::Next no longer
+supports dotted-decimals with alpha elements and a fatal exception will be
+thrown if one is provided to C<next_version>.
 
 =head1 SEE ALSO
 
